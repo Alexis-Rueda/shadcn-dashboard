@@ -1,64 +1,120 @@
-"use client"
+"use client";
 
-import { Payment } from "@/data/payments.data"
-import { ColumnDef } from "@tanstack/react-table"
-import { Badge } from "@/components/ui/badge"
-import { toast } from "sonner"
-import { MoreHorizontal } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Payment } from "@/data/payments.data";
+import { ColumnDef, SortDirection } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+const SortedIcon = ({ isSorted }: { isSorted: false | SortDirection }) => {
+    if (isSorted === "asc") {
+        return <ArrowUp className="h-4 w-4" />;
+    }
 
+    if (isSorted === "desc") {
+        return <ArrowDown className="h-4 w-4" />;
+    }
+
+    return null;
+};
 
 export const columns: ColumnDef<Payment>[] = [
     {
         accessorKey: "clientName",
-        header: "Client Name",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Client Name
+                    <SortedIcon isSorted={column.getIsSorted()} />
+                </Button>
+            );
+        },
     },
     {
         accessorKey: "status",
-        header: "Status",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Status
+                    <SortedIcon isSorted={column.getIsSorted()} />
+                </Button>
+            );
+        },
         cell: ({ row }) => {
             const status = row.getValue("status") as string;
-            const variant =
-                {
+            const variant = {
                 pending: "secondary",
                 processing: "info",
                 success: "success",
                 failed: "destructive",
-                }[status] ?? ("default" as any);
+            }[status] ?? ("default" as any);
 
             return (
                 <Badge variant={variant} capitalize>
-                {status}
+                    {status}
                 </Badge>
             );
         },
     },
     {
         accessorKey: "email",
-        header: "Email",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Email
+                    <SortedIcon isSorted={column.getIsSorted()} />
+                </Button>
+            );
+        },
     },
     {
         accessorKey: "amount",
-        header: () => <div className="text-right">Amount</div>,
+        header: ({ column }) => {
+            return (
+                <div className="text-right">
+                    <Button
+                        variant="ghost"
+                        onClick={() =>
+                            column.toggleSorting(
+                                column.getIsSorted() === "asc",
+                            )}
+                    >
+                        Amount
+                        <SortedIcon isSorted={column.getIsSorted()} />
+                    </Button>
+                </div>
+            );
+        },
+        // header: () => <div className="text-right">Amount</div>,
         cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("amount"))
-        const formatted = new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-        }).format(amount)
-    
-        return <div className="text-right font-medium">{formatted}</div>
+            const amount = parseFloat(row.getValue("amount"));
+            const formatted = new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+            }).format(amount);
+
+            return <div className="text-right font-medium">{formatted}</div>;
         },
     },
 
@@ -69,34 +125,36 @@ export const columns: ColumnDef<Payment>[] = [
 
             return (
                 <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem
-                    onClick={() => {
-                        navigator.clipboard.writeText(payment.id);
-                        toast("Payment ID copied to clipboard", {
-                            position: "top-right",
-                            duration: 3000,
-                        });
-                        // toast({
-                        //   description: "Payment ID copied to clipboard",
-                        // });
-                    }}
-                    >
-                    Copy payment ID
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>View customer</DropdownMenuItem>
-                    <DropdownMenuItem>View payment details</DropdownMenuItem>
-                </DropdownMenuContent>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                navigator.clipboard.writeText(payment.id);
+                                toast("Payment ID copied to clipboard", {
+                                    position: "top-right",
+                                    duration: 3000,
+                                });
+                                // toast({
+                                //   description: "Payment ID copied to clipboard",
+                                // });
+                            }}
+                        >
+                            Copy payment ID
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>View customer</DropdownMenuItem>
+                        <DropdownMenuItem>
+                            View payment details
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
                 </DropdownMenu>
             );
         },
     },
-]
+];
