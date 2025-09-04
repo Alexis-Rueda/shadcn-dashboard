@@ -4,7 +4,7 @@ import { Payment } from "@/data/payments.data";
 import { ColumnDef, SortDirection } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowDown, ArrowUp, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
