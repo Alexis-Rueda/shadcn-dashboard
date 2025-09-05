@@ -21,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 const formSchema = z.object({
   username: z.string().min(2).max(20),
@@ -29,7 +30,12 @@ const formSchema = z.object({
   dateOfBirth: z.date({
     error: "A date of birth is required.",
   }),
+  marketingEmails: z.boolean(),
 })
+  .refine((data) => data.marketingEmails === true, {
+    message: "You must agree to receive marketing emails.",
+    path: ["marketingEmails"],
+  });
 
 export default function Page() {
 
@@ -39,8 +45,14 @@ export default function Page() {
     defaultValues: {
       username: "",
       email: "",
+      gender: "male",
+      dateOfBirth: new Date(),
+      marketingEmails: false,
     },
-  })
+  });
+
+  // console.log({form});
+  
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -163,7 +175,7 @@ export default function Page() {
                       disabled={(date) =>
                         date > new Date() || date < new Date("1900-01-01")
                       }
-                      initialFocus
+                      autoFocus
                     />
                   </PopoverContent>
                 </Popover>
@@ -171,6 +183,28 @@ export default function Page() {
                   Your date of birth is used to calculate your age.
                 </FormDescription>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Marketing Emails - Switch */}
+          <FormField
+            control={form.control}
+            name="marketingEmails"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm col-span-1 sm:col-span-2 ">
+                <div className="space-y-0.5">
+                  <FormLabel>Marketing emails</FormLabel>
+                  <FormDescription>
+                    Receive emails about your account.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
               </FormItem>
             )}
           />
